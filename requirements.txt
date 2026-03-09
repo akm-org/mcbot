@@ -1,2 +1,2 @@
-pyCraft
+git+https://github.com/ammaraskar/pyCraft.git
 minecraft-data
