@@ -4,7 +4,10 @@ const http = require("http")
 const HOST = "Animationmovie.aternos.me"
 const PORT = 62132
 
-// Render requires an HTTP server
+let botRunning = false
+let client = null
+
+// Render needs an HTTP server
 const WEB_PORT = process.env.PORT || 3000
 
 http.createServer((req, res) => {
@@ -25,10 +28,17 @@ function randomName() {
 
 function startBot() {
 
+  if (botRunning) {
+    console.log("Bot already running")
+    return
+  }
+
+  botRunning = true
+
   const username = randomName()
   console.log("Connecting as", username)
 
-  const client = bedrock.createClient({
+  client = bedrock.createClient({
     host: HOST,
     port: PORT,
     username: username,
@@ -38,7 +48,6 @@ function startBot() {
   client.on("join", () => {
     console.log(username + " joined server")
 
-    // simple activity loop
     setInterval(() => {
       console.log("Bot active...")
     }, 15000)
@@ -46,11 +55,13 @@ function startBot() {
 
   client.on("disconnect", () => {
     console.log("Disconnected → reconnecting")
+    botRunning = false
     setTimeout(startBot, 5000)
   })
 
   client.on("error", (err) => {
     console.log("Connection error:", err.message)
+    botRunning = false
     setTimeout(startBot, 10000)
   })
 }
