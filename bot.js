@@ -1,7 +1,18 @@
-const bedrock = require('bedrock-protocol')
+const bedrock = require("bedrock-protocol")
+const http = require("http")
 
 const HOST = "Animationmovie.aternos.me"
 const PORT = 62132
+
+// Render requires an HTTP server
+const WEB_PORT = process.env.PORT || 3000
+
+http.createServer((req, res) => {
+  res.writeHead(200)
+  res.end("Minecraft bot running")
+}).listen(WEB_PORT, () => {
+  console.log("Web server running on port", WEB_PORT)
+})
 
 function randomName() {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -21,16 +32,16 @@ function startBot() {
     host: HOST,
     port: PORT,
     username: username,
-    offline: true,
-    connectTimeout: 15000
+    offline: true
   })
 
-  client.on('join', () => {
-    console.log("Joined server")
+  client.on("join", () => {
+    console.log(username + " joined server")
 
+    // simple activity loop
     setInterval(() => {
-      console.log("Walking randomly")
-    }, 10000)
+      console.log("Bot active...")
+    }, 15000)
   })
 
   client.on("disconnect", () => {
@@ -38,7 +49,7 @@ function startBot() {
     setTimeout(startBot, 5000)
   })
 
-  client.on("error", err => {
+  client.on("error", (err) => {
     console.log("Connection error:", err.message)
     setTimeout(startBot, 10000)
   })
